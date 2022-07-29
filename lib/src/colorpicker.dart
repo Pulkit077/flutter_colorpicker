@@ -233,11 +233,11 @@ class _ColorPickerState extends State<ColorPicker> {
     // Update text in `hexInputController` if provided.
     widget.hexInputController?.text = colorToHex(color.toColor(), enableAlpha: widget.enableAlpha);
     setState(() => currentHsvColor = color);
-    widget.onColorChanged(currentHsvColor.toColor());
-    if (widget.onHsvColorChanged != null) widget.onHsvColorChanged!(currentHsvColor);
+   // widget.onColorChanged(currentHsvColor.toColor());
+   // if (widget.onHsvColorChanged != null) widget.onHsvColorChanged!(currentHsvColor);
   }
 
- /* Widget colorPicker() {
+  Widget colorPicker() {
     return ClipRRect(
       borderRadius: widget.pickerAreaBorderRadius,
       child: Padding(
@@ -245,7 +245,7 @@ class _ColorPickerState extends State<ColorPicker> {
         child: ColorPickerArea(currentHsvColor, onColorChanging, widget.paletteType),
       ),
     );
-  }*/
+  }
 
   Widget sliderByPaletteType() {
     switch (widget.paletteType) {
@@ -279,7 +279,11 @@ class _ColorPickerState extends State<ColorPicker> {
     if (MediaQuery.of(context).orientation == Orientation.portrait || widget.portraitOnly) {
       return Column(
         children: <Widget>[
-
+          SizedBox(
+            width: widget.colorPickerWidth,
+            height: widget.colorPickerWidth * widget.pickerAreaHeightPercent,
+            child: colorPicker(),
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(15.0, 5.0, 10.0, 5.0),
             child: Row(
@@ -355,6 +359,10 @@ class _ColorPickerState extends State<ColorPicker> {
     } else {
       return Row(
         children: <Widget>[
+          SizedBox(
+              width: widget.colorPickerWidth,
+              height: widget.colorPickerWidth * widget.pickerAreaHeightPercent,
+              child: colorPicker()),
           Column(
             children: <Widget>[
               Row(
