@@ -233,8 +233,8 @@ class _ColorPickerState extends State<ColorPicker> {
     // Update text in `hexInputController` if provided.
     widget.hexInputController?.text = colorToHex(color.toColor(), enableAlpha: widget.enableAlpha);
     setState(() => currentHsvColor = color);
-   // widget.onColorChanged(currentHsvColor.toColor());
-   // if (widget.onHsvColorChanged != null) widget.onHsvColorChanged!(currentHsvColor);
+    widget.onColorChanged(currentHsvColor.toColor());
+    if (widget.onHsvColorChanged != null) widget.onHsvColorChanged!(currentHsvColor);
   }
 
   Widget colorPicker() {
@@ -289,7 +289,7 @@ class _ColorPickerState extends State<ColorPicker> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                GestureDetector(
+               /* GestureDetector(
                   onTap: () => setState(() {
                     if (widget.onHistoryChanged != null && !colorHistory.contains(currentHsvColor.toColor())) {
                       colorHistory.add(currentHsvColor.toColor());
@@ -297,7 +297,7 @@ class _ColorPickerState extends State<ColorPicker> {
                     }
                   }),
                   child: ColorIndicator(currentHsvColor),
-                ),
+                ),*/
                 Expanded(
                   child: Column(
                     children: <Widget>[
