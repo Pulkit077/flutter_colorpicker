@@ -301,7 +301,7 @@ class _ColorPickerState extends State<ColorPicker> {
                 Expanded(
                   child: Column(
                     children: <Widget>[
-                      SizedBox(height: 44.0, width: double.infinity - 75.0, child: sliderByPaletteType()),
+                      SizedBox(height: 44.0, width: double.infinity, child: sliderByPaletteType()),
                       if (widget.enableAlpha)
                         SizedBox(
                           height: 40.0,
