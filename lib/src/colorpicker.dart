@@ -285,7 +285,7 @@ class _ColorPickerState extends State<ColorPicker> {
             child: colorPicker(),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 2.0, bottom: 12.0),
+            padding: const EdgeInsets.only(top: 4.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
