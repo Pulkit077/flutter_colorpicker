@@ -583,14 +583,14 @@ class _SliderLayout extends MultiChildLayoutDelegate {
     layoutChild(
       track,
       BoxConstraints.tightFor(
-        width: size.width,
+        width: size.width - 30.0,
         height: size.height,
       ),
     );
     positionChild(track, Offset(15.0, size.height * 0.4));
     layoutChild(
       thumb,
-      BoxConstraints.tightFor(width: 5.0, height: size.height / 4),
+      BoxConstraints.tightFor(width: 5.0, height: size.height),
     );
     positionChild(thumb, Offset(0.0, size.height * 0.4));
     layoutChild(
@@ -1089,7 +1089,7 @@ class ColorPickerSlider extends StatelessWidget {
           thumbColor = HSVColor.fromAHSV(1.0, hsvColor.hue, 1.0, hsvColor.value).toColor();
           break;
         case TrackType.lightness:
-          thumbOffset += (box.maxWidth) * hsvToHsl(hsvColor).lightness;
+          thumbOffset += (box.maxWidth - 30.0) * hsvToHsl(hsvColor).lightness;
           thumbColor = HSLColor.fromAHSL(1.0, hsvColor.hue, 1.0, hsvToHsl(hsvColor).lightness).toColor();
           break;
         case TrackType.red:
