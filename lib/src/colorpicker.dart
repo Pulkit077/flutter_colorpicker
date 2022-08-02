@@ -326,7 +326,8 @@ class _ColorPickerState extends State<ColorPicker> {
                 Expanded(
                   child: Column(
                     children: <Widget>[
-                      SizedBox(
+                      Container(
+                        alignment: Alignment.center,
                           height: widget.sliderHeight,
                           width: double.infinity,
                           child: sliderByPaletteType()),
@@ -414,7 +415,8 @@ class _ColorPickerState extends State<ColorPicker> {
                   ),
                   Column(
                     children: <Widget>[
-                      SizedBox(
+                      Container(
+                          alignment: Alignment.center,
                           height: widget.sliderHeight,
                           width: double.infinity,
                           child: sliderByPaletteType()),
