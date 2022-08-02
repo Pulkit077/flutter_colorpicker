@@ -326,8 +326,7 @@ class _ColorPickerState extends State<ColorPicker> {
                 Expanded(
                   child: Column(
                     children: <Widget>[
-                      Container(
-                        alignment: Alignment.center,
+                      SizedBox(
                           height: widget.sliderHeight,
                           width: double.infinity,
                           child: sliderByPaletteType()),
@@ -386,7 +385,6 @@ class _ColorPickerState extends State<ColorPicker> {
               enableAlpha: widget.enableAlpha,
               embeddedText: false,
             ),
-          const SizedBox(height: 20.0),
         ],
       );
     } else {
@@ -415,8 +413,7 @@ class _ColorPickerState extends State<ColorPicker> {
                   ),
                   Column(
                     children: <Widget>[
-                      Container(
-                          alignment: Alignment.center,
+                      SizedBox(
                           height: widget.sliderHeight,
                           width: double.infinity,
                           child: sliderByPaletteType()),
@@ -459,7 +456,6 @@ class _ColorPickerState extends State<ColorPicker> {
                         const SizedBox(width: 15),
                       ]),
                 ),
-              const SizedBox(height: 20.0),
               if (widget.showLabel && widget.labelTypes.isNotEmpty)
                 FittedBox(
                   child: ColorPickerLabel(
@@ -482,7 +478,6 @@ class _ColorPickerState extends State<ColorPicker> {
                   enableAlpha: widget.enableAlpha,
                   embeddedText: false,
                 ),
-              const SizedBox(height: 5),
             ],
           ),
         ],
