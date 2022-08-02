@@ -10,36 +10,38 @@ import 'utils.dart';
 
 /// The default layout of Color Picker.
 class ColorPicker extends StatefulWidget {
-  const ColorPicker({
-    Key? key,
-    required this.pickerColor,
-    required this.onColorChanged,
-    this.pickerHsvColor,
-    this.onHsvColorChanged,
-    this.paletteType = PaletteType.hsvWithHue,
-    this.enableAlpha = true,
-    @Deprecated('Use empty list in [labelTypes] to disable label.')
-        this.showLabel = true,
-    this.labelTypes = const [
-      ColorLabelType.rgb,
-      ColorLabelType.hsv,
-      ColorLabelType.hsl
-    ],
-    @Deprecated('Use Theme.of(context).textTheme.bodyText1 & 2 to alter text style.')
-        this.labelTextStyle,
-    this.displayThumbColor = false,
-    this.portraitOnly = false,
-    this.colorPickerWidth = 300.0,
-    this.pickerAreaHeightPercent = 1.0,
-    this.pickerAreaBorderRadius = const BorderRadius.all(Radius.zero),
-    this.hexInputBar = false,
-    this.showColorPicker = true,
-    this.hexInputController,
-    this.colorHistory,
-    this.onHistoryChanged,
-  }) : super(key: key);
+  const ColorPicker(
+      {Key? key,
+      required this.pickerColor,
+      required this.onColorChanged,
+      this.pickerHsvColor,
+      this.onHsvColorChanged,
+      this.paletteType = PaletteType.hsvWithHue,
+      this.enableAlpha = true,
+      @Deprecated('Use empty list in [labelTypes] to disable label.')
+          this.showLabel = true,
+      this.labelTypes = const [
+        ColorLabelType.rgb,
+        ColorLabelType.hsv,
+        ColorLabelType.hsl
+      ],
+      @Deprecated('Use Theme.of(context).textTheme.bodyText1 & 2 to alter text style.')
+          this.labelTextStyle,
+      this.displayThumbColor = false,
+      this.portraitOnly = false,
+      this.colorPickerWidth = 300.0,
+      this.pickerAreaHeightPercent = 1.0,
+      this.pickerAreaBorderRadius = const BorderRadius.all(Radius.zero),
+      this.hexInputBar = false,
+      this.showColorPicker = true,
+      this.hexInputController,
+      this.colorHistory,
+      this.onHistoryChanged,
+      this.sliderHeight = 44})
+      : super(key: key);
 
   final Color pickerColor;
+  final double sliderHeight;
   final bool showColorPicker;
   final ValueChanged<Color> onColorChanged;
   final HSVColor? pickerHsvColor;
@@ -215,8 +217,9 @@ class _ColorPickerState extends State<ColorPicker> {
       setState(() => currentHsvColor = HSVColor.fromColor(color));
       // notify with a callback.
       widget.onColorChanged(color);
-      if (widget.onHsvColorChanged != null)
+      if (widget.onHsvColorChanged != null) {
         widget.onHsvColorChanged!(currentHsvColor);
+      }
     }
   }
 
@@ -236,8 +239,9 @@ class _ColorPickerState extends State<ColorPicker> {
             colorToHex(color.toColor(), enableAlpha: widget.enableAlpha);
         setState(() => currentHsvColor = color);
         widget.onColorChanged(currentHsvColor.toColor());
-        if (widget.onHsvColorChanged != null)
+        if (widget.onHsvColorChanged != null) {
           widget.onHsvColorChanged!(currentHsvColor);
+        }
       },
       displayThumbColor: widget.displayThumbColor,
     );
@@ -249,8 +253,9 @@ class _ColorPickerState extends State<ColorPicker> {
         colorToHex(color.toColor(), enableAlpha: widget.enableAlpha);
     setState(() => currentHsvColor = color);
     widget.onColorChanged(currentHsvColor.toColor());
-    if (widget.onHsvColorChanged != null)
+    if (widget.onHsvColorChanged != null) {
       widget.onHsvColorChanged!(currentHsvColor);
+    }
   }
 
   Widget colorPicker() {
@@ -322,7 +327,7 @@ class _ColorPickerState extends State<ColorPicker> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-                          height: 44.0,
+                          height: widget.sliderHeight,
                           width: double.infinity,
                           child: sliderByPaletteType()),
                       if (widget.enableAlpha)
@@ -373,8 +378,9 @@ class _ColorPickerState extends State<ColorPicker> {
               (Color color) {
                 setState(() => currentHsvColor = HSVColor.fromColor(color));
                 widget.onColorChanged(currentHsvColor.toColor());
-                if (widget.onHsvColorChanged != null)
+                if (widget.onHsvColorChanged != null) {
                   widget.onHsvColorChanged!(currentHsvColor);
+                }
               },
               enableAlpha: widget.enableAlpha,
               embeddedText: false,
@@ -409,7 +415,7 @@ class _ColorPickerState extends State<ColorPicker> {
                   Column(
                     children: <Widget>[
                       SizedBox(
-                          height: 44.0,
+                          height: widget.sliderHeight,
                           width: double.infinity,
                           child: sliderByPaletteType()),
                       if (widget.enableAlpha)
@@ -467,8 +473,9 @@ class _ColorPickerState extends State<ColorPicker> {
                   (Color color) {
                     setState(() => currentHsvColor = HSVColor.fromColor(color));
                     widget.onColorChanged(currentHsvColor.toColor());
-                    if (widget.onHsvColorChanged != null)
+                    if (widget.onHsvColorChanged != null) {
                       widget.onHsvColorChanged!(currentHsvColor);
+                    }
                   },
                   enableAlpha: widget.enableAlpha,
                   embeddedText: false,
