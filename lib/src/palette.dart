@@ -584,7 +584,7 @@ class _SliderLayout extends MultiChildLayoutDelegate {
       track,
       BoxConstraints.tightFor(
         width: size.width - 30.0,
-        height: size.height / 5,
+        height: size.height,
       ),
     );
     positionChild(track, Offset(15.0, size.height * 0.4));
