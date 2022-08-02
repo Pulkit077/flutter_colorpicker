@@ -27,12 +27,14 @@ class ColorPicker extends StatefulWidget {
     this.pickerAreaHeightPercent = 1.0,
     this.pickerAreaBorderRadius = const BorderRadius.all(Radius.zero),
     this.hexInputBar = false,
+    this.showColorPicker = true,
     this.hexInputController,
     this.colorHistory,
     this.onHistoryChanged,
   }) : super(key: key);
 
   final Color pickerColor;
+  final bool showColorPicker;
   final ValueChanged<Color> onColorChanged;
   final HSVColor? pickerHsvColor;
   final ValueChanged<HSVColor>? onHsvColorChanged;
@@ -359,6 +361,7 @@ class _ColorPickerState extends State<ColorPicker> {
     } else {
       return Row(
         children: <Widget>[
+         if(widget.showColorPicker)
           SizedBox(
               width: widget.colorPickerWidth,
               height: widget.colorPickerWidth * widget.pickerAreaHeightPercent,
