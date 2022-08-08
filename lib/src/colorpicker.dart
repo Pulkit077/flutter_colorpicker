@@ -807,7 +807,7 @@ class _HueRingPickerState extends State<HueRingPicker> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 const SizedBox(width: 10),
-                ColorIndicator(currentHsvColor),
+              /*  ColorIndicator(currentHsvColor),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 5, 0, 20),
@@ -822,7 +822,7 @@ class _HueRingPickerState extends State<HueRingPicker> {
                       embeddedText: true,
                     ),
                   ),
-                ),
+                ),*/
               ],
             ),
           ),
