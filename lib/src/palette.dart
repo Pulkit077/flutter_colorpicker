@@ -498,10 +498,12 @@ class RGBWithBlueColorPainter extends CustomPainter {
 
 /// Painter for hue color wheel.
 class HUEColorWheelPainter extends CustomPainter {
-  const HUEColorWheelPainter(this.hsvColor, {this.pointerColor});
+  const HUEColorWheelPainter(this.hsvColor, this.isColorPickerIndicator,
+      {this.pointerColor});
 
   final HSVColor hsvColor;
   final Color? pointerColor;
+  final bool isColorPickerIndicator;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -532,22 +534,24 @@ class HUEColorWheelPainter extends CustomPainter {
     canvas.drawCircle(center, radio,
         Paint()..color = Colors.black.withOpacity(1 - hsvColor.value));
 
-    canvas.drawCircle(
-      Offset(
-        center.dx +
-            hsvColor.saturation * radio * cos((hsvColor.hue * pi / 180)),
-        center.dy -
-            hsvColor.saturation * radio * sin((hsvColor.hue * pi / 180)),
-      ),
-      size.height * 0.04,
-      Paint()
-        ..color = pointerColor ??
-            (useWhiteForeground(hsvColor.toColor())
-                ? Colors.white
-                : Colors.black)
-        ..strokeWidth = 1.5
-        ..style = PaintingStyle.stroke,
-    );
+    isColorPickerIndicator
+        ? canvas.drawCircle(
+            Offset(
+              center.dx +
+                  hsvColor.saturation * radio * cos((hsvColor.hue * pi / 180)),
+              center.dy -
+                  hsvColor.saturation * radio * sin((hsvColor.hue * pi / 180)),
+            ),
+            size.height * 0.04,
+            Paint()
+              ..color = pointerColor ??
+                  (useWhiteForeground(hsvColor.toColor())
+                      ? Colors.white
+                      : Colors.black)
+              ..strokeWidth = 1.5
+              ..style = PaintingStyle.stroke,
+          )
+        : null;
   }
 
   @override
@@ -1421,7 +1425,9 @@ class ColorPickerArea extends StatelessWidget {
                   return CustomPaint(
                       painter: RGBWithBlueColorPainter(hsvColor.toColor()));
                 case PaletteType.hueWheel:
-                  return CustomPaint(painter: HUEColorWheelPainter(hsvColor));
+                  return CustomPaint(
+                      painter: HUEColorWheelPainter(
+                          hsvColor, isColorPickerIndicator));
                 default:
                   return const CustomPaint();
               }

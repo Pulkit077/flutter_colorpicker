@@ -5,6 +5,7 @@
 library hsv_picker;
 
 import 'package:flutter/material.dart';
+
 import 'palette.dart';
 import 'utils.dart';
 
@@ -267,11 +268,11 @@ class _ColorPickerState extends State<ColorPicker> {
         padding:
             EdgeInsets.all(widget.paletteType == PaletteType.hueWheel ? 10 : 0),
         child: ColorPickerArea(
-            currentHsvColor,
-            widget.isColorPickerIndicator == true
-                ? onColorChanging
-                : (color) {},
-            widget.paletteType),
+          currentHsvColor,
+          widget.isColorPickerIndicator == true ? onColorChanging : (color) {},
+          widget.paletteType,
+          isColorPickerIndicator: widget.isColorPickerIndicator,
+        ),
       ),
     );
   }
@@ -396,21 +397,18 @@ class _ColorPickerState extends State<ColorPicker> {
     } else {
       return Row(
         children: <Widget>[
-          if (widget.showColorPicker)
-            SizedBox(
-              width: widget.colorPickerWidth,
-              height: widget.colorPickerWidth * widget.pickerAreaHeightPercent,
-              child:
-                  widget.isColorPickerIndicator == true ? colorPicker() : null,
-            ),
+          SizedBox(
+            width: widget.colorPickerWidth,
+            height: widget.colorPickerWidth * widget.pickerAreaHeightPercent,
+            child: colorPicker(),
+          ),
           Column(
             children: <Widget>[
               Row(
                 children: <Widget>[
                   const SizedBox(width: 20.0),
-                  widget.isColorPickerIndicator == true
-                      ? GestureDetector(
-                          onTap: () => setState(() {
+                  GestureDetector(
+                      onTap: () => setState(() {
                             if (widget.onHistoryChanged != null &&
                                 !colorHistory
                                     .contains(currentHsvColor.toColor())) {
@@ -418,9 +416,7 @@ class _ColorPickerState extends State<ColorPicker> {
                               widget.onHistoryChanged!(colorHistory);
                             }
                           }),
-                          child: ColorIndicator(currentHsvColor),
-                        )
-                      : const SizedBox(),
+                      child: const SizedBox()),
                   Column(
                     children: <Widget>[
                       SizedBox(
