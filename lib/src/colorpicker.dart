@@ -37,6 +37,7 @@ class ColorPicker extends StatefulWidget {
       this.hexInputController,
       this.colorHistory,
       this.onHistoryChanged,
+      this.isColorPickerIndicator = true,
       this.sliderHeight = 44})
       : super(key: key);
 
@@ -57,6 +58,7 @@ class ColorPicker extends StatefulWidget {
   final double pickerAreaHeightPercent;
   final BorderRadius pickerAreaBorderRadius;
   final bool hexInputBar;
+  final bool isColorPickerIndicator;
 
   /// Allows setting the color using text input, via [TextEditingController].
   ///
@@ -392,25 +394,29 @@ class _ColorPickerState extends State<ColorPicker> {
         children: <Widget>[
           if (widget.showColorPicker)
             SizedBox(
-                width: widget.colorPickerWidth,
-                height:
-                    widget.colorPickerWidth * widget.pickerAreaHeightPercent,
-                child: colorPicker()),
+              width: widget.colorPickerWidth,
+              height: widget.colorPickerWidth * widget.pickerAreaHeightPercent,
+              child:
+                  widget.isColorPickerIndicator == true ? colorPicker() : null,
+            ),
           Column(
             children: <Widget>[
               Row(
                 children: <Widget>[
                   const SizedBox(width: 20.0),
-                  GestureDetector(
-                    onTap: () => setState(() {
-                      if (widget.onHistoryChanged != null &&
-                          !colorHistory.contains(currentHsvColor.toColor())) {
-                        colorHistory.add(currentHsvColor.toColor());
-                        widget.onHistoryChanged!(colorHistory);
-                      }
-                    }),
-                    child: ColorIndicator(currentHsvColor),
-                  ),
+                  widget.isColorPickerIndicator == true
+                      ? GestureDetector(
+                          onTap: () => setState(() {
+                            if (widget.onHistoryChanged != null &&
+                                !colorHistory
+                                    .contains(currentHsvColor.toColor())) {
+                              colorHistory.add(currentHsvColor.toColor());
+                              widget.onHistoryChanged!(colorHistory);
+                            }
+                          }),
+                          child: ColorIndicator(currentHsvColor),
+                        )
+                      : const SizedBox(),
                   Column(
                     children: <Widget>[
                       SizedBox(
