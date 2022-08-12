@@ -3,10 +3,10 @@
 /// Try to create a Color Picker with other layout on your own :)
 import 'dart:math';
 
-import 'package:colour_wheel/presentation/pages/index.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import 'utils.dart';
 
