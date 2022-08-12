@@ -2,10 +2,12 @@
 ///
 /// Try to create a Color Picker with other layout on your own :)
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_drawing/path_drawing.dart';
 
 import 'harmony_type.dart';
 import 'utils.dart';
@@ -511,23 +513,32 @@ class HUEColorWheelPainter extends CustomPainter {
           pointerColor ?? (useWhiteForeground(hsvColor.toColor()) ? Colors.white : Colors.black)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
+    final linesBetweenPoints = Paint()
+      ..color =
+          pointerColor ?? (useWhiteForeground(hsvColor.toColor()) ? Colors.white : Colors.black)
+      ..strokeWidth = 2.0
+      ..style = PaintingStyle.stroke;
 
     final mediumPickerRadius = size.height * 0.03;
     final smallPickerRadius = size.height * 0.02;
 
-    canvas.drawCircle(
-      Offset(
-        center.dx + hsvColor.saturation * radio * cos((hsvColor.hue * pi / 180)),
-        center.dy - hsvColor.saturation * radio * sin((hsvColor.hue * pi / 180)),
-      ),
-      mediumPickerRadius,
-      colorPickerPaint,
-    );
+    if (wheelType != HarmonyType.square) {
+      canvas.drawCircle(
+        Offset(
+          center.dx + hsvColor.saturation * radio * cos((hsvColor.hue * pi / 180)),
+          center.dy - hsvColor.saturation * radio * sin((hsvColor.hue * pi / 180)),
+        ),
+        mediumPickerRadius,
+        colorPickerPaint,
+      );
+    }
 
-    dx(double offset) =>
-        center.dx + hsvColor.saturation * radio * cos((hsvColor.hue * pi / 180) + offset);
-    dy(double offset) =>
-        center.dy - hsvColor.saturation * radio * sin((hsvColor.hue * pi / 180) + offset);
+    dx(double offset, [double radius = 0]) =>
+        center.dx +
+        ((hsvColor.saturation * radio) - radius) * cos((hsvColor.hue * pi / 180) + offset);
+    dy(double offset, [double radius = 0]) =>
+        center.dy -
+        ((hsvColor.saturation * radio) - radius) * sin((hsvColor.hue * pi / 180) + offset);
 
     switch (wheelType) {
       case HarmonyType.complementary:
@@ -539,6 +550,32 @@ class HUEColorWheelPainter extends CustomPainter {
           smallPickerRadius,
           colorPickerPaint,
         );
+
+        final Path pathToSmallCircle = Path()
+          ..moveTo(
+              center.dx +
+                  ((hsvColor.saturation * radio) - mediumPickerRadius) *
+                      cos((hsvColor.hue * pi / 180)),
+              center.dy -
+                  ((hsvColor.saturation * radio) - mediumPickerRadius) *
+                      sin((hsvColor.hue * pi / 180)))
+          ..lineTo(
+              center.dx +
+                  ((hsvColor.saturation * radio) - smallPickerRadius) *
+                      -1 *
+                      cos((hsvColor.hue * pi / 180)),
+              center.dy -
+                  ((hsvColor.saturation * radio) - smallPickerRadius) *
+                      -1 *
+                      sin((hsvColor.hue * pi / 180)));
+        canvas.drawPath(
+          dashPath(
+            dashArray: CircularIntervalList<double>(<double>[4.0, 1.0]),
+            pathToSmallCircle,
+          ),
+          linesBetweenPoints,
+        );
+
         break;
 
       case HarmonyType.splitComplementary:
@@ -560,6 +597,38 @@ class HUEColorWheelPainter extends CustomPainter {
           colorPickerPaint,
         );
 
+        final Path pathToSecondCircle = Path()
+          ..moveTo(
+            center.dx +
+                ((hsvColor.saturation * radio) - mediumPickerRadius) *
+                    cos((hsvColor.hue * pi / 180)),
+            center.dy -
+                ((hsvColor.saturation * radio) - mediumPickerRadius) *
+                    sin((hsvColor.hue * pi / 180)),
+          )
+          ..lineTo(
+            dx(-offset, smallPickerRadius),
+            dy(-offset, smallPickerRadius),
+          )
+          ..lineTo(
+            dx(offset, smallPickerRadius),
+            dy(offset, smallPickerRadius),
+          )
+          ..lineTo(
+            center.dx +
+                ((hsvColor.saturation * radio) - mediumPickerRadius) *
+                    cos((hsvColor.hue * pi / 180)),
+            center.dy -
+                ((hsvColor.saturation * radio) - mediumPickerRadius) *
+                    sin((hsvColor.hue * pi / 180)),
+          );
+        canvas.drawPath(
+          dashPath(
+            dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
+            pathToSecondCircle,
+          ),
+          linesBetweenPoints,
+        );
         break;
 
       case HarmonyType.analogus:
@@ -579,6 +648,26 @@ class HUEColorWheelPainter extends CustomPainter {
           ),
           smallPickerRadius,
           colorPickerPaint,
+        );
+        final Path pathToSecondCircle = Path()
+          ..moveTo(
+            dx(offset),
+            dy(offset),
+          )
+          ..lineTo(
+            center.dx + ((hsvColor.saturation * radio)) * cos((hsvColor.hue * pi / 180)),
+            center.dy - ((hsvColor.saturation * radio)) * sin((hsvColor.hue * pi / 180)),
+          )
+          ..lineTo(
+            dx(-offset),
+            dy(-offset),
+          );
+        canvas.drawPath(
+          dashPath(
+            dashArray: CircularIntervalList<double>(<double>[5.0, 1.5]),
+            pathToSecondCircle,
+          ),
+          linesBetweenPoints,
         );
         break;
 
@@ -605,6 +694,14 @@ class HUEColorWheelPainter extends CustomPainter {
         const offset = (90 * pi / 180);
         canvas.drawCircle(
           Offset(
+            center.dx + hsvColor.saturation * radio * cos((hsvColor.hue * pi / 180)),
+            center.dy - hsvColor.saturation * radio * sin((hsvColor.hue * pi / 180)),
+          ),
+          smallPickerRadius,
+          colorPickerPaint,
+        );
+        canvas.drawCircle(
+          Offset(
             dx(offset),
             dy(offset),
           ),
@@ -627,6 +724,35 @@ class HUEColorWheelPainter extends CustomPainter {
           smallPickerRadius,
           colorPickerPaint,
         );
+        final Path pathToSecondCircle = Path()
+          ..moveTo(
+            center.dx +
+                ((hsvColor.saturation * radio) - smallPickerRadius) *
+                    cos((hsvColor.hue * pi / 180)),
+            center.dy -
+                ((hsvColor.saturation * radio) - smallPickerRadius) *
+                    sin((hsvColor.hue * pi / 180)),
+          )
+          ..lineTo(
+            dx(offset, smallPickerRadius),
+            dy(offset, smallPickerRadius),
+          )
+          ..lineTo(
+            dx(-(offset * 2), smallPickerRadius),
+            dy(-(offset * 2), smallPickerRadius),
+          )
+          ..lineTo(
+            dx(-offset, smallPickerRadius),
+            dy(-offset, smallPickerRadius),
+          )
+          ..close();
+        canvas.drawPath(
+          dashPath(
+            dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
+            pathToSecondCircle,
+          ),
+          linesBetweenPoints,
+        );
         break;
 
       case HarmonyType.triadic:
@@ -646,6 +772,35 @@ class HUEColorWheelPainter extends CustomPainter {
           ),
           smallPickerRadius,
           colorPickerPaint,
+        );
+        final Path pathToSecondCircle = Path()
+          ..moveTo(
+            center.dx +
+                ((hsvColor.saturation * radio) - mediumPickerRadius) *
+                    cos((hsvColor.hue * pi / 180)),
+            center.dy -
+                ((hsvColor.saturation * radio) - mediumPickerRadius) *
+                    sin((hsvColor.hue * pi / 180)),
+          )
+          ..lineTo(
+            dx(offset, smallPickerRadius),
+            dy(offset, smallPickerRadius),
+          )
+          ..lineTo(
+            dx(-(offset * 2), smallPickerRadius),
+            dy(-(offset * 2), smallPickerRadius),
+          )
+          ..lineTo(
+            dx(-offset, smallPickerRadius),
+            dy(-offset, smallPickerRadius),
+          )
+          ..close();
+        canvas.drawPath(
+          dashPath(
+            dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
+            pathToSecondCircle,
+          ),
+          linesBetweenPoints,
         );
         break;
 
@@ -1451,7 +1606,6 @@ class ColorPickerArea extends StatelessWidget {
 
           mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [hsvColor.withHue(complementaryHue).withSaturation(defaultRadio)];
-
           onColorChanged(mainColor, additionalColors);
           break;
 
@@ -1580,19 +1734,16 @@ class ColorPickerArea extends StatelessWidget {
       builder: (BuildContext context, BoxConstraints constraints) {
         double width = constraints.maxWidth;
         double height = constraints.maxHeight;
-
         return RawGestureDetector(
           gestures: {
             _AlwaysWinPanGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<_AlwaysWinPanGestureRecognizer>(
               () => _AlwaysWinPanGestureRecognizer(),
-              (_AlwaysWinPanGestureRecognizer instance) {
-                instance
-                  ..onDown =
-                      ((details) => _handleGesture(details.globalPosition, context, height, width))
-                  ..onUpdate =
-                      ((details) => _handleGesture(details.globalPosition, context, height, width));
-              },
+              (_AlwaysWinPanGestureRecognizer instance) => instance
+                ..onDown =
+                    ((details) => _handleGesture(details.globalPosition, context, height, width))
+                ..onUpdate =
+                    ((details) => _handleGesture(details.globalPosition, context, height, width)),
             ),
           },
           child: Builder(
@@ -1619,7 +1770,9 @@ class ColorPickerArea extends StatelessWidget {
                 case PaletteType.rgbWithBlue:
                   return CustomPaint(painter: RGBWithBlueColorPainter(hsvColor.toColor()));
                 case PaletteType.hueWheel:
-                  return CustomPaint(painter: HUEColorWheelPainter(hsvColor, wheelType));
+                  return CustomPaint(
+                    painter: HUEColorWheelPainter(hsvColor, wheelType),
+                  );
                 default:
                   return const CustomPaint();
               }
