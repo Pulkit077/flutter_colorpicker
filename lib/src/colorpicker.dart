@@ -171,6 +171,7 @@ class ColorPicker extends StatefulWidget {
 
 class _ColorPickerState extends State<ColorPicker> {
   HSVColor currentHsvColor = const HSVColor.fromAHSV(0.0, 0.0, 0.0, 0.0);
+  List<HSVColor> currentHsvColors = [];
   List<Color> colorHistory = [];
 
   @override
@@ -232,25 +233,35 @@ class _ColorPickerState extends State<ColorPicker> {
     return ColorPickerSlider(
       trackType,
       currentHsvColor,
-      (HSVColor color) {
+      additionalHsvColors: currentHsvColors,
+      displayThumbColor: widget.displayThumbColor,
+      onColorChanged: (HSVColor color, [List<HSVColor>? colors = const []]) {
         // Update text in `hexInputController` if provided.
         widget.hexInputController?.text =
             colorToHex(color.toColor(), enableAlpha: widget.enableAlpha);
-        setState(() => currentHsvColor = color);
-        widget.onColorChanged(currentHsvColor.toColor());
+        setState(() {
+          currentHsvColor = color;
+          currentHsvColors = colors!;
+        });
+        final currentColors = currentHsvColors.map((e) => e.toColor()).toList();
+
+        widget.onColorChanged(currentHsvColor.toColor(), currentColors);
         if (widget.onHsvColorChanged != null) {
           widget.onHsvColorChanged!(currentHsvColor);
         }
       },
-      displayThumbColor: widget.displayThumbColor,
     );
   }
 
-  void onColorChanging(HSVColor color, [List<Color> additionalColor = const []]) {
+  void onColorChanging(HSVColor color, [List<HSVColor> additionalColors = const []]) {
     // Update text in `hexInputController` if provided.
+    final List<Color> hsvToColors = additionalColors.map((hsv) => hsv.toColor()).toList();
     widget.hexInputController?.text = colorToHex(color.toColor(), enableAlpha: widget.enableAlpha);
-    setState(() => currentHsvColor = color);
-    widget.onColorChanged(currentHsvColor.toColor(), additionalColor);
+    setState(() {
+      currentHsvColor = color;
+      currentHsvColors = additionalColors;
+    });
+    widget.onColorChanged(currentHsvColor.toColor(), hsvToColors);
     if (widget.onHsvColorChanged != null) {
       widget.onHsvColorChanged!(currentHsvColor);
     }
@@ -502,7 +513,7 @@ class SlidePicker extends StatefulWidget {
   }) : super(key: key);
 
   final Color pickerColor;
-  final ValueChanged<Color> onColorChanged;
+  final void Function(Color, [List<Color>?]) onColorChanged;
   final ColorModel colorModel;
   final bool enableAlpha;
   final Size sliderSize;
@@ -542,9 +553,10 @@ class _SlidePickerState extends State<SlidePicker> {
     return ColorPickerSlider(
       trackType,
       currentHsvColor,
-      (HSVColor color) {
+      onColorChanged: (HSVColor color, [List<HSVColor>? colors = const []]) {
         setState(() => currentHsvColor = color);
-        widget.onColorChanged(currentHsvColor.toColor());
+        final hsvToColor = colors!.map((e) => e.toColor()).toList();
+        widget.onColorChanged(currentHsvColor.toColor(), hsvToColor);
       },
       displayThumbColor: widget.displayThumbColor,
       fullThumbColor: true,
@@ -715,6 +727,7 @@ class HueRingPicker extends StatefulWidget {
 
 class _HueRingPickerState extends State<HueRingPicker> {
   HSVColor currentHsvColor = const HSVColor.fromAHSV(0.0, 0.0, 0.0, 0.0);
+  List<HSVColor> additionalHsvColors = [];
 
   @override
   void initState() {
@@ -726,11 +739,19 @@ class _HueRingPickerState extends State<HueRingPicker> {
   void didUpdateWidget(HueRingPicker oldWidget) {
     super.didUpdateWidget(oldWidget);
     currentHsvColor = HSVColor.fromColor(widget.pickerColor);
+    print(additionalHsvColors);
   }
 
-  void onColorChanging(HSVColor color, [List<Color> additionalColors = const []]) {
-    setState(() => currentHsvColor = color);
-    widget.onColorChanged(currentHsvColor.toColor(), additionalColors);
+  void onColorChanging(HSVColor color, [List<HSVColor>? additionalColors = const []]) {
+    setState(
+      () {
+        currentHsvColor = color;
+        additionalHsvColors = additionalColors!;
+      },
+    );
+
+    final List<Color> hsvToColors = additionalColors!.map((hsv) => hsv.toColor()).toList();
+    widget.onColorChanged(currentHsvColor.toColor(), hsvToColors);
   }
 
   @override
@@ -768,7 +789,7 @@ class _HueRingPickerState extends State<HueRingPicker> {
               child: ColorPickerSlider(
                 TrackType.alpha,
                 currentHsvColor,
-                onColorChanging,
+                onColorChanged: onColorChanging,
                 displayThumbColor: widget.displayThumbColor,
               ),
             ),
@@ -845,7 +866,7 @@ class _HueRingPickerState extends State<HueRingPicker> {
                         child: ColorPickerSlider(
                           TrackType.alpha,
                           currentHsvColor,
-                          onColorChanging,
+                          onColorChanged: onColorChanging,
                           displayThumbColor: true,
                         ),
                       ),
@@ -859,6 +880,7 @@ class _HueRingPickerState extends State<HueRingPicker> {
     }
   }
 }
+
 enum HarmonyType {
   complementary,
   splitComplementary,
@@ -867,4 +889,3 @@ enum HarmonyType {
   square,
   triadic,
 }
-

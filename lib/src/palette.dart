@@ -1161,16 +1161,18 @@ class _ColorPickerInputState extends State<ColorPickerInput> {
 class ColorPickerSlider extends StatelessWidget {
   const ColorPickerSlider(
     this.trackType,
-    this.hsvColor,
-    this.onColorChanged, {
+    this.hsvColor, {
     Key? key,
+    required this.onColorChanged,
     this.displayThumbColor = false,
     this.fullThumbColor = false,
+    this.additionalHsvColors,
   }) : super(key: key);
 
   final TrackType trackType;
   final HSVColor hsvColor;
-  final ValueChanged<HSVColor> onColorChanged;
+  final List<HSVColor>? additionalHsvColors;
+  final void Function(HSVColor, [List<HSVColor>?]) onColorChanged;
   final bool displayThumbColor;
   final bool fullThumbColor;
 
@@ -1181,19 +1183,36 @@ class ColorPickerSlider extends StatelessWidget {
       case TrackType.hue:
         // 360 is the same as zero
         // if set to 360, sliding to end goes to zero
-        onColorChanged(hsvColor.withHue(progress * 359));
+        final additionalColorsHue =
+            additionalHsvColors?.map((e) => e.withHue(progress * 359)).toList();
+        onColorChanged(hsvColor.withHue(progress * 359), additionalColorsHue);
         break;
       case TrackType.saturation:
-        onColorChanged(hsvColor.withSaturation(progress));
+        final additionalColorsSaturation =
+            additionalHsvColors?.map((e) => e.withSaturation(progress)).toList();
+        onColorChanged(hsvColor.withSaturation(progress), additionalColorsSaturation);
         break;
       case TrackType.saturationForHSL:
-        onColorChanged(hslToHsv(hsvToHsl(hsvColor).withSaturation(progress)));
+        final additionalColorsSaturationForHSL = additionalHsvColors!
+            .map((e) => hslToHsv(hsvToHsl(e).withSaturation(progress)))
+            .toList();
+        onColorChanged(
+          hslToHsv(hsvToHsl(hsvColor).withSaturation(progress)),
+          additionalColorsSaturationForHSL,
+        );
         break;
       case TrackType.value:
-        onColorChanged(hsvColor.withValue(progress));
+        final additionalColorsValue =
+            additionalHsvColors?.map((e) => e.withValue(progress)).toList();
+        onColorChanged(hsvColor.withValue(progress), additionalColorsValue);
         break;
       case TrackType.lightness:
-        onColorChanged(hslToHsv(hsvToHsl(hsvColor).withLightness(progress)));
+        final additionalColorsLightness =
+            additionalHsvColors?.map((e) => hslToHsv(hsvToHsl(e).withLightness(progress))).toList();
+        onColorChanged(
+          hslToHsv(hsvToHsl(hsvColor).withLightness(progress)),
+          additionalColorsLightness,
+        );
         break;
       case TrackType.red:
         onColorChanged(HSVColor.fromColor(hsvColor.toColor().withRed((progress * 0xff).round())));
@@ -1344,7 +1363,7 @@ class ColorPickerArea extends StatelessWidget {
   }) : super(key: key);
 
   final HSVColor hsvColor;
-  final void Function(HSVColor, [List<Color>]) onColorChanged;
+  final void Function(HSVColor, [List<HSVColor>]) onColorChanged;
   final PaletteType paletteType;
   final HarmonyType? wheelType;
 
@@ -1418,7 +1437,7 @@ class ColorPickerArea extends StatelessWidget {
 
       final defaultHue = ((rad + 90) % 360).clamp(0, 360).toDouble();
       final defaultRadio = dist.clamp(0, 1).toDouble();
-
+      late final List<HSVColor> additionalColors;
       switch (wheelType) {
         case HarmonyType.complementary:
           final complementaryRadio =
@@ -1426,9 +1445,7 @@ class ColorPickerArea extends StatelessWidget {
           final complementaryHue = ((complementaryRadio + 90) % 360).clamp(0, 360).toDouble();
 
           final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
-          final List<Color> additionalColors = [
-            hsvColor.withHue(complementaryHue).withSaturation(defaultRadio).toColor()
-          ];
+          additionalColors = [hsvColor.withHue(complementaryHue).withSaturation(defaultRadio)];
 
           onColorChanged(mainColor, additionalColors);
           break;
@@ -1446,9 +1463,9 @@ class ColorPickerArea extends StatelessWidget {
               ((complementarySecondRadio + 90) % 360).clamp(0, 360).toDouble();
 
           final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
-          final List<Color> additionalColors = [
-            hsvColor.withHue(complementaryHue).withSaturation(defaultRadio).toColor(),
-            hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio).toColor()
+          additionalColors = [
+            hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
+            hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio)
           ];
 
           onColorChanged(mainColor, additionalColors);
@@ -1468,9 +1485,9 @@ class ColorPickerArea extends StatelessWidget {
               ((complementarySecondRadio + 90) % 360).clamp(0, 360).toDouble();
 
           final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
-          final List<Color> additionalColors = [
-            hsvColor.withHue(complementaryHue).withSaturation(defaultRadio).toColor(),
-            hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio).toColor()
+          additionalColors = [
+            hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
+            hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio)
           ];
 
           onColorChanged(mainColor, additionalColors);
@@ -1485,9 +1502,9 @@ class ColorPickerArea extends StatelessWidget {
           final monochromaticSecondRadio = monochromaticSecondDist.clamp(0, 1).toDouble();
 
           final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
-          final List<Color> additionalColors = [
-            hsvColor.withHue(defaultHue).withSaturation(monochromaticRadio).toColor(),
-            hsvColor.withHue(defaultHue).withSaturation(monochromaticSecondRadio).toColor()
+          additionalColors = [
+            hsvColor.withHue(defaultHue).withSaturation(monochromaticRadio),
+            hsvColor.withHue(defaultHue).withSaturation(monochromaticSecondRadio)
           ];
 
           onColorChanged(mainColor, additionalColors);
@@ -1513,10 +1530,10 @@ class ColorPickerArea extends StatelessWidget {
               ((complementaryThirdRadio + 90) % 360).clamp(0, 360).toDouble();
 
           final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
-          final List<Color> additionalColors = [
-            hsvColor.withHue(complementaryHue).withSaturation(defaultRadio).toColor(),
-            hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio).toColor(),
-            hsvColor.withHue(complementaryThirdHue).withSaturation(defaultRadio).toColor()
+          additionalColors = [
+            hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
+            hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio),
+            hsvColor.withHue(complementaryThirdHue).withSaturation(defaultRadio)
           ];
 
           onColorChanged(mainColor, additionalColors);
@@ -1535,9 +1552,9 @@ class ColorPickerArea extends StatelessWidget {
               ((complementarySecondRadio + 90) % 360).clamp(0, 360).toDouble();
 
           final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
-          final List<Color> additionalColors = [
-            hsvColor.withHue(complementaryHue).withSaturation(defaultRadio).toColor(),
-            hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio).toColor()
+          additionalColors = [
+            hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
+            hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio)
           ];
 
           onColorChanged(mainColor, additionalColors);
@@ -1545,7 +1562,7 @@ class ColorPickerArea extends StatelessWidget {
           break;
         default:
           final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
-          final List<Color> additionalColors = [];
+          additionalColors = [];
           onColorChanged(mainColor, additionalColors);
       }
     } else {
