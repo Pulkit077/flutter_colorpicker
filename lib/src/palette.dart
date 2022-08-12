@@ -6,8 +6,8 @@ import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
+import 'harmony_type.dart';
 import 'utils.dart';
 
 /// Palette types for color picker area widget.
@@ -506,26 +506,29 @@ class HUEColorWheelPainter extends CustomPainter {
     canvas.drawCircle(center, radio, Paint()..shader = gradientR.createShader(rect));
     canvas.drawCircle(center, radio, Paint()..color = Colors.black.withOpacity(1 - hsvColor.value));
 
-    final colorPickerIndicator = Paint()
+    final colorPickerPaint = Paint()
       ..color =
           pointerColor ?? (useWhiteForeground(hsvColor.toColor()) ? Colors.white : Colors.black)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
+
+    final mediumPickerRadius = size.height * 0.03;
+    final smallPickerRadius = size.height * 0.02;
 
     canvas.drawCircle(
       Offset(
         center.dx + hsvColor.saturation * radio * cos((hsvColor.hue * pi / 180)),
         center.dy - hsvColor.saturation * radio * sin((hsvColor.hue * pi / 180)),
       ),
-      size.height * 0.03,
-      colorPickerIndicator,
+      mediumPickerRadius,
+      colorPickerPaint,
     );
 
     dx(double offset) =>
         center.dx + hsvColor.saturation * radio * cos((hsvColor.hue * pi / 180) + offset);
-
     dy(double offset) =>
         center.dy - hsvColor.saturation * radio * sin((hsvColor.hue * pi / 180) + offset);
+
     switch (wheelType) {
       case HarmonyType.complementary:
         canvas.drawCircle(
@@ -533,31 +536,32 @@ class HUEColorWheelPainter extends CustomPainter {
             center.dx + hsvColor.saturation * radio * -1 * cos((hsvColor.hue * pi / 180)),
             center.dy - hsvColor.saturation * radio * -1 * sin((hsvColor.hue * pi / 180)),
           ),
-          size.height * 0.02,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
         break;
+
       case HarmonyType.splitComplementary:
         const offset = ((180 - 45 / 2) * pi / 180);
-
         canvas.drawCircle(
           Offset(
             dx(offset),
             dy(offset),
           ),
-          size.height * 0.02,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
         canvas.drawCircle(
           Offset(
             dx(-offset),
             dy(-offset),
           ),
-          size.height * 0.02,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
 
         break;
+
       case HarmonyType.analogus:
         const offset = (30 * pi / 180);
         canvas.drawCircle(
@@ -565,88 +569,86 @@ class HUEColorWheelPainter extends CustomPainter {
             dx(offset),
             dy(offset),
           ),
-          size.height * 0.02,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
         canvas.drawCircle(
           Offset(
             dx(-offset),
             dy(-offset),
           ),
-          size.height * 0.02,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
         break;
+
       case HarmonyType.monochromatic:
         canvas.drawCircle(
           Offset(
             center.dx + hsvColor.saturation * radio / 1.45 * cos((hsvColor.hue * pi / 180)),
             center.dy - hsvColor.saturation * radio / 1.45 * sin((hsvColor.hue * pi / 180)),
           ),
-          size.height * 0.02,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
         canvas.drawCircle(
           Offset(
             center.dx + hsvColor.saturation * radio / 2.5 * cos((hsvColor.hue * pi / 180)),
             center.dy - hsvColor.saturation * radio / 2.5 * sin((hsvColor.hue * pi / 180)),
           ),
-          size.height * 0.02,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
-
         break;
+
       case HarmonyType.square:
         const offset = (90 * pi / 180);
-
         canvas.drawCircle(
           Offset(
             dx(offset),
             dy(offset),
           ),
-          size.height * 0.02,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
         canvas.drawCircle(
           Offset(
             dx(-offset),
             dy(-offset),
           ),
-          size.height * 0.02,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
         canvas.drawCircle(
           Offset(
             dx(-(offset * 2)),
             dy(-(offset * 2)),
           ),
-          size.height * 0.02,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
+        break;
 
-        break;
       case HarmonyType.triadic:
+        const offset = (120 * pi / 180);
         canvas.drawCircle(
           Offset(
-            center.dx +
-                hsvColor.saturation * radio * cos((hsvColor.hue * pi / 180) - (120 * pi / 180)),
-            center.dy -
-                hsvColor.saturation * radio * sin((hsvColor.hue * pi / 180) - (120 * pi / 180)),
+            dx(offset),
+            dy(offset),
           ),
-          size.height * 0.025,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
         canvas.drawCircle(
           Offset(
-            center.dx +
-                hsvColor.saturation * radio * cos((hsvColor.hue * pi / 180) + (120 * pi / 180)),
-            center.dy -
-                hsvColor.saturation * radio * sin((hsvColor.hue * pi / 180) + (120 * pi / 180)),
+            dx(-offset),
+            dy(-offset),
           ),
-          size.height * 0.025,
-          colorPickerIndicator,
+          smallPickerRadius,
+          colorPickerPaint,
         );
         break;
+
       default:
         break;
     }
@@ -1437,40 +1439,43 @@ class ColorPickerArea extends StatelessWidget {
 
       final defaultHue = ((rad + 90) % 360).clamp(0, 360).toDouble();
       final defaultRadio = dist.clamp(0, 1).toDouble();
+
+      late final HSVColor mainColor;
       late final List<HSVColor> additionalColors;
+
       switch (wheelType) {
         case HarmonyType.complementary:
           final complementaryRadio =
               (atan2(horizontal - center.dx, vertical - center.dy) / pi) / 2 * 360;
           final complementaryHue = ((complementaryRadio + 90) % 360).clamp(0, 360).toDouble();
 
-          final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
+          mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [hsvColor.withHue(complementaryHue).withSaturation(defaultRadio)];
 
           onColorChanged(mainColor, additionalColors);
           break;
+
         case HarmonyType.splitComplementary:
           final complementaryRadio =
-              (atan2(horizontal - center.dx, vertical - center.dy) / pi + ((180 - 135) / 180)) /
+              (atan2(horizontal - center.dx, vertical - center.dy) / pi + ((180 - 157.5) / 180)) /
                   2 *
                   360;
           final complementarySecondRadio =
-              (atan2(horizontal - center.dx, vertical - center.dy) / pi - ((180 - 135) / 180)) /
+              (atan2(horizontal - center.dx, vertical - center.dy) / pi - ((180 - 157.5) / 180)) /
                   2 *
                   360;
           final complementaryHue = ((complementaryRadio + 90) % 360).clamp(0, 360).toDouble();
           final complementarySecondHue =
               ((complementarySecondRadio + 90) % 360).clamp(0, 360).toDouble();
 
-          final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
+          mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [
             hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
             hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio)
           ];
-
           onColorChanged(mainColor, additionalColors);
-
           break;
+
         case HarmonyType.analogus:
           final complementaryRadio =
               (atan2(horizontal - center.dx, vertical - center.dy) / pi + ((180 - 30) / 180)) /
@@ -1484,15 +1489,15 @@ class ColorPickerArea extends StatelessWidget {
           final complementarySecondHue =
               ((complementarySecondRadio + 90) % 360).clamp(0, 360).toDouble();
 
-          final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
+          mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [
             hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
             hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio)
           ];
 
           onColorChanged(mainColor, additionalColors);
-
           break;
+
         case HarmonyType.monochromatic:
           final monochromaticDist =
               sqrt(pow(horizontal - center.dx, 2) + pow(vertical - center.dy, 2)) / radio / 1.5;
@@ -1501,14 +1506,14 @@ class ColorPickerArea extends StatelessWidget {
           final monochromaticRadio = monochromaticDist.clamp(0, 1).toDouble();
           final monochromaticSecondRadio = monochromaticSecondDist.clamp(0, 1).toDouble();
 
-          final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
+          mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [
             hsvColor.withHue(defaultHue).withSaturation(monochromaticRadio),
             hsvColor.withHue(defaultHue).withSaturation(monochromaticSecondRadio)
           ];
-
           onColorChanged(mainColor, additionalColors);
           break;
+
         case HarmonyType.square:
           final complementaryRadio =
               (atan2(horizontal - center.dx, vertical - center.dy) / pi + ((180 - 90) / 180)) /
@@ -1529,15 +1534,15 @@ class ColorPickerArea extends StatelessWidget {
           final complementaryThirdHue =
               ((complementaryThirdRadio + 90) % 360).clamp(0, 360).toDouble();
 
-          final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
+          mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [
             hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
             hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio),
             hsvColor.withHue(complementaryThirdHue).withSaturation(defaultRadio)
           ];
-
           onColorChanged(mainColor, additionalColors);
           break;
+
         case HarmonyType.triadic:
           final complementaryRadio =
               (atan2(horizontal - center.dx, vertical - center.dy) / pi + ((180 - 120) / 180)) /
@@ -1551,17 +1556,16 @@ class ColorPickerArea extends StatelessWidget {
           final complementarySecondHue =
               ((complementarySecondRadio + 90) % 360).clamp(0, 360).toDouble();
 
-          final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
+          mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [
             hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
             hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio)
           ];
-
           onColorChanged(mainColor, additionalColors);
-
           break;
+
         default:
-          final mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
+          mainColor = hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [];
           onColorChanged(mainColor, additionalColors);
       }

@@ -6,6 +6,7 @@ library hsv_picker;
 
 import 'package:flutter/material.dart';
 
+import 'harmony_type.dart';
 import 'palette.dart';
 import 'utils.dart';
 
@@ -879,13 +880,4 @@ class _HueRingPickerState extends State<HueRingPicker> {
       );
     }
   }
-}
-
-enum HarmonyType {
-  complementary,
-  splitComplementary,
-  analogus,
-  monochromatic,
-  square,
-  triadic,
 }
