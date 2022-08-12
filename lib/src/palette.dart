@@ -570,8 +570,8 @@ class HUEColorWheelPainter extends CustomPainter {
                       sin((hsvColor.hue * pi / 180)));
         canvas.drawPath(
           dashPath(
-            dashArray: CircularIntervalList<double>(<double>[4.0, 1.0]),
             pathToSmallCircle,
+            dashArray: CircularIntervalList<double>(<double>[4.0, 1.0]),
           ),
           linesBetweenPoints,
         );
@@ -624,8 +624,8 @@ class HUEColorWheelPainter extends CustomPainter {
           );
         canvas.drawPath(
           dashPath(
-            dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
             pathToSecondCircle,
+            dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
           ),
           linesBetweenPoints,
         );
@@ -664,8 +664,8 @@ class HUEColorWheelPainter extends CustomPainter {
           );
         canvas.drawPath(
           dashPath(
-            dashArray: CircularIntervalList<double>(<double>[5.0, 1.5]),
             pathToSecondCircle,
+            dashArray: CircularIntervalList<double>(<double>[5.0, 1.5]),
           ),
           linesBetweenPoints,
         );
@@ -748,8 +748,8 @@ class HUEColorWheelPainter extends CustomPainter {
           ..close();
         canvas.drawPath(
           dashPath(
-            dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
             pathToSecondCircle,
+            dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
           ),
           linesBetweenPoints,
         );
@@ -797,8 +797,8 @@ class HUEColorWheelPainter extends CustomPainter {
           ..close();
         canvas.drawPath(
           dashPath(
-            dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
             pathToSecondCircle,
+            dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
           ),
           linesBetweenPoints,
         );
