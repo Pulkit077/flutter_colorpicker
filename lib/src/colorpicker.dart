@@ -271,14 +271,11 @@ class _ColorPickerState extends State<ColorPicker> {
   Widget colorPicker() {
     return ClipRRect(
       borderRadius: widget.pickerAreaBorderRadius,
-      child: Padding(
-        padding: EdgeInsets.all(widget.paletteType == PaletteType.hueWheel ? 10 : 0),
-        child: ColorPickerArea(
-          currentHsvColor,
-          onColorChanging,
-          widget.paletteType,
-          wheelType: widget.wheelType,
-        ),
+      child: ColorPickerArea(
+        currentHsvColor,
+        onColorChanging,
+        widget.paletteType,
+        wheelType: widget.wheelType,
       ),
     );
   }
@@ -322,35 +319,19 @@ class _ColorPickerState extends State<ColorPicker> {
               child: colorPicker(),
             ),
           Padding(
-            padding: const EdgeInsets.only(top: 4.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            padding: const EdgeInsets.only(top: 12.0),
+            child: Column(
               children: <Widget>[
-                /* GestureDetector(
-                  onTap: () => setState(() {
-                    if (widget.onHistoryChanged != null && !colorHistory.contains(currentHsvColor.toColor())) {
-                      colorHistory.add(currentHsvColor.toColor());
-                      widget.onHistoryChanged!(colorHistory);
-                    }
-                  }),
-                  child: ColorIndicator(currentHsvColor),
-                ),*/
-                Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                          height: widget.sliderHeight,
-                          width: double.infinity,
-                          child: sliderByPaletteType()),
-                      if (widget.enableAlpha)
-                        SizedBox(
-                          height: 40.0,
-                          width: widget.colorPickerWidth - 75.0,
-                          child: colorPickerSlider(TrackType.alpha),
-                        ),
-                    ],
+                SizedBox(
+                    height: widget.sliderHeight,
+                    width: double.infinity,
+                    child: sliderByPaletteType()),
+                if (widget.enableAlpha)
+                  SizedBox(
+                    height: 40.0,
+                    width: widget.colorPickerWidth - 75.0,
+                    child: colorPickerSlider(TrackType.alpha),
                   ),
-                ),
               ],
             ),
           ),
@@ -705,6 +686,7 @@ class HueRingPicker extends StatefulWidget {
     Key? key,
     required this.pickerColor,
     required this.onColorChanged,
+    this.startedOffset,
     this.portraitOnly = false,
     this.colorPickerHeight = 250.0,
     this.hueRingStrokeWidth = 20.0,
@@ -720,6 +702,7 @@ class HueRingPicker extends StatefulWidget {
   final double hueRingStrokeWidth;
   final bool enableAlpha;
   final bool displayThumbColor;
+  final Offset? startedOffset;
   final BorderRadius pickerAreaBorderRadius;
 
   @override
@@ -740,7 +723,6 @@ class _HueRingPickerState extends State<HueRingPicker> {
   void didUpdateWidget(HueRingPicker oldWidget) {
     super.didUpdateWidget(oldWidget);
     currentHsvColor = HSVColor.fromColor(widget.pickerColor);
-    print(additionalHsvColors);
   }
 
   void onColorChanging(HSVColor color, [List<HSVColor>? additionalColors = const []]) {
@@ -778,7 +760,11 @@ class _HueRingPickerState extends State<HueRingPicker> {
                 SizedBox(
                   width: widget.colorPickerHeight / 1.6,
                   height: widget.colorPickerHeight / 1.6,
-                  child: ColorPickerArea(currentHsvColor, onColorChanging, PaletteType.hsv),
+                  child: ColorPickerArea(
+                    currentHsvColor,
+                    onColorChanging,
+                    PaletteType.hsv,
+                  ),
                 )
               ]),
             ),
@@ -829,7 +815,11 @@ class _HueRingPickerState extends State<HueRingPicker> {
               height: widget.colorPickerHeight,
               child: ClipRRect(
                 borderRadius: widget.pickerAreaBorderRadius,
-                child: ColorPickerArea(currentHsvColor, onColorChanging, PaletteType.hsv),
+                child: ColorPickerArea(
+                  currentHsvColor,
+                  onColorChanging,
+                  PaletteType.hsv,
+                ),
               ),
             ),
           ),

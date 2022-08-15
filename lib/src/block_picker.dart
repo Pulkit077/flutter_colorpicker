@@ -9,10 +9,12 @@ import 'utils.dart';
 typedef PickerItem = Widget Function(Color color);
 
 /// Customize the layout.
-typedef PickerLayoutBuilder = Widget Function(BuildContext context, List<Color> colors, PickerItem child);
+typedef PickerLayoutBuilder = Widget Function(
+    BuildContext context, List<Color> colors, PickerItem child);
 
 /// Customize the item shape.
-typedef PickerItemBuilder = Widget Function(Color color, bool isCurrentColor, void Function() changeColor);
+typedef PickerItemBuilder = Widget Function(
+    Color color, bool isCurrentColor, void Function() changeColor);
 
 // Provide a list of colors for block color picker.
 const List<Color> _defaultColors = [
@@ -61,7 +63,9 @@ Widget _defaultItemBuilder(Color color, bool isCurrentColor, void Function() cha
     decoration: BoxDecoration(
       shape: BoxShape.circle,
       color: color,
-      boxShadow: [BoxShadow(color: color.withOpacity(0.8), offset: const Offset(1, 2), blurRadius: 5)],
+      boxShadow: [
+        BoxShadow(color: color.withOpacity(0.8), offset: const Offset(1, 2), blurRadius: 5)
+      ],
     ),
     child: Material(
       color: Colors.transparent,
@@ -167,7 +171,9 @@ class _MultipleChoiceBlockPickerState extends State<MultipleChoiceBlockPicker> {
   void toggleColor(Color color) {
     setState(() {
       if (_currentColors != null) {
-        _currentColors!.contains(color) ? _currentColors!.remove(color) : _currentColors!.add(color);
+        _currentColors!.contains(color)
+            ? _currentColors!.remove(color)
+            : _currentColors!.add(color);
       }
     });
     widget.onColorsChanged(_currentColors ?? []);
@@ -181,7 +187,8 @@ class _MultipleChoiceBlockPickerState extends State<MultipleChoiceBlockPicker> {
       (Color color) => widget.itemBuilder(
         color,
         (_currentColors != null && (widget.useInShowDialog ? true : widget.pickerColors != null))
-            ? _currentColors!.contains(color) && (widget.useInShowDialog ? true : widget.pickerColors!.contains(color))
+            ? _currentColors!.contains(color) &&
+                (widget.useInShowDialog ? true : widget.pickerColors!.contains(color))
             : false,
         () => toggleColor(color),
       ),
