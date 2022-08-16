@@ -1530,8 +1530,8 @@ class ColorPickerArea extends StatefulWidget {
 }
 
 class _ColorPickerAreaState extends State<ColorPickerArea> {
-  HarmonyType? type;
   Offset? position;
+  HarmonyType? type;
 
   @override
   void initState() {
@@ -1563,9 +1563,11 @@ class _ColorPickerAreaState extends State<ColorPickerArea> {
           },
           child: Builder(
             builder: (BuildContext _) {
-              if (type != widget.wheelType && position != null) {
-                WidgetsBinding.instance.addPostFrameCallback(
-                    (timeStamp) => _handleGesture(position!, context, height, width));
+              if (type != widget.wheelType) {
+                WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                  widget.onColorChanged(
+                      widget.hsvColor, getAdditionalColor(widget.wheelType, height, width));
+                });
                 type = widget.wheelType;
               }
               switch (widget.paletteType) {
@@ -1603,6 +1605,49 @@ class _ColorPickerAreaState extends State<ColorPickerArea> {
         );
       },
     );
+  }
+
+  List<HSVColor> getAdditionalColor(HarmonyType? type, height, width) {
+    switch (type) {
+      case HarmonyType.complementary:
+        final colorComplementary =
+            widget.hsvColor.withHue(((widget.hsvColor.hue - 180) % 360).clamp(0, 360).toDouble());
+        return [colorComplementary];
+      case HarmonyType.splitComplementary:
+        final colorComplementary =
+            widget.hsvColor.withHue(((widget.hsvColor.hue + 157.5) % 360).clamp(0, 360).toDouble());
+        final colorSecondComplementary =
+            widget.hsvColor.withHue(((widget.hsvColor.hue - 157.5) % 360).clamp(0, 360).toDouble());
+        return [colorSecondComplementary, colorComplementary];
+      case HarmonyType.analogus:
+        final colorComplementary =
+            widget.hsvColor.withHue(((widget.hsvColor.hue + 30) % 360).clamp(0, 360).toDouble());
+        final colorSecondComplementary =
+            widget.hsvColor.withHue(((widget.hsvColor.hue - 30) % 360).clamp(0, 360).toDouble());
+        return [colorSecondComplementary, colorComplementary];
+      case HarmonyType.monochromatic:
+        final colorComplementary =
+            widget.hsvColor.withSaturation(widget.hsvColor.saturation / 1.45);
+        final colorSecondComplementary =
+            widget.hsvColor.withSaturation(widget.hsvColor.saturation / 2.5);
+        return [colorComplementary, colorSecondComplementary];
+      case HarmonyType.square:
+        final colorComplementary =
+            widget.hsvColor.withHue(((widget.hsvColor.hue - 90) % 360).clamp(0, 360).toDouble());
+        final colorSecondComplementary =
+            widget.hsvColor.withHue(((widget.hsvColor.hue + 90) % 360).clamp(0, 360).toDouble());
+        final colorThirdComplementary =
+            widget.hsvColor.withHue(((widget.hsvColor.hue - 180) % 360).clamp(0, 360).toDouble());
+        return [colorComplementary, colorSecondComplementary, colorThirdComplementary];
+      case HarmonyType.triadic:
+        final colorComplementary =
+            widget.hsvColor.withHue(((widget.hsvColor.hue + 120) % 360).clamp(0, 360).toDouble());
+        final colorSecondComplementary =
+            widget.hsvColor.withHue(((widget.hsvColor.hue - 120) % 360).clamp(0, 360).toDouble());
+        return [colorSecondComplementary, colorComplementary];
+      default:
+        return [];
+    }
   }
 
   void _handleColorRectChange(double horizontal, double vertical) {
@@ -1680,7 +1725,9 @@ class _ColorPickerAreaState extends State<ColorPickerArea> {
       final defaultHue = ((rad + 90) % 360).clamp(0, 360).toDouble();
       final defaultRadio = dist.clamp(0, 1).toDouble();
 
-      late final HSVColor mainColor;
+      late final HSVColor mainColor =
+          widget.hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
+
       late final List<HSVColor> additionalColors;
 
       switch (widget.wheelType) {
@@ -1689,7 +1736,6 @@ class _ColorPickerAreaState extends State<ColorPickerArea> {
               (atan2(horizontal - center.dx, vertical - center.dy) / pi) / 2 * 360;
           final complementaryHue = ((complementaryRadio + 90) % 360).clamp(0, 360).toDouble();
 
-          mainColor = widget.hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [
             widget.hsvColor.withHue(complementaryHue).withSaturation(defaultRadio)
           ];
@@ -1709,7 +1755,6 @@ class _ColorPickerAreaState extends State<ColorPickerArea> {
           final complementarySecondHue =
               ((complementarySecondRadio + 90) % 360).clamp(0, 360).toDouble();
 
-          mainColor = widget.hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [
             widget.hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
             widget.hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio)
@@ -1730,7 +1775,6 @@ class _ColorPickerAreaState extends State<ColorPickerArea> {
           final complementarySecondHue =
               ((complementarySecondRadio + 90) % 360).clamp(0, 360).toDouble();
 
-          mainColor = widget.hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [
             widget.hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
             widget.hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio)
@@ -1747,7 +1791,6 @@ class _ColorPickerAreaState extends State<ColorPickerArea> {
           final monochromaticRadio = monochromaticDist.clamp(0, 1).toDouble();
           final monochromaticSecondRadio = monochromaticSecondDist.clamp(0, 1).toDouble();
 
-          mainColor = widget.hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [
             widget.hsvColor.withHue(defaultHue).withSaturation(monochromaticRadio),
             widget.hsvColor.withHue(defaultHue).withSaturation(monochromaticSecondRadio)
@@ -1775,7 +1818,6 @@ class _ColorPickerAreaState extends State<ColorPickerArea> {
           final complementaryThirdHue =
               ((complementaryThirdRadio + 90) % 360).clamp(0, 360).toDouble();
 
-          mainColor = widget.hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [
             widget.hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
             widget.hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio),
@@ -1797,7 +1839,6 @@ class _ColorPickerAreaState extends State<ColorPickerArea> {
           final complementarySecondHue =
               ((complementarySecondRadio + 90) % 360).clamp(0, 360).toDouble();
 
-          mainColor = widget.hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [
             widget.hsvColor.withHue(complementaryHue).withSaturation(defaultRadio),
             widget.hsvColor.withHue(complementarySecondHue).withSaturation(defaultRadio)
@@ -1806,7 +1847,6 @@ class _ColorPickerAreaState extends State<ColorPickerArea> {
           break;
 
         default:
-          mainColor = widget.hsvColor.withHue(defaultHue).withSaturation(defaultRadio);
           additionalColors = [];
           widget.onColorChanged(mainColor, additionalColors);
       }
