@@ -36,11 +36,11 @@ class ColorPicker extends StatefulWidget {
     this.onHistoryChanged,
     this.wheelType,
     this.sliderHeight = 44,
-    this.isColorControl = false,
+    this.showColorControl = false,
   }) : super(key: key);
 
   final Color pickerColor;
-  final bool isColorControl;
+  final bool showColorControl;
   final double sliderHeight;
   final bool showColorPicker;
   final void Function(Color, [List<Color>?]) onColorChanged;
@@ -173,13 +173,12 @@ class ColorPicker extends StatefulWidget {
 
 class _ColorPickerState extends State<ColorPicker> {
   HSVColor currentHsvColor = const HSVColor.fromAHSV(0.0, 0.0, 0.0, 0.0);
-  HSVColor currentHsvColorSecond = const HSVColor.fromAHSV(0.0, 0.0, 0.0, 0.0);
   List<HSVColor> currentHsvColors = [];
   List<Color> colorHistory = [];
 
   @override
   void initState() {
-    currentHsvColorSecond = (widget.pickerHsvColor != null)
+    currentHsvColor = (widget.pickerHsvColor != null)
         ? widget.pickerHsvColor as HSVColor
         : HSVColor.fromColor(widget.pickerColor);
 
@@ -197,14 +196,6 @@ class _ColorPickerState extends State<ColorPicker> {
       colorHistory = widget.colorHistory ?? [];
     }
     super.initState();
-  }
-
-  @override
-  void didUpdateWidget(ColorPicker oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    currentHsvColor = (widget.pickerHsvColor != null)
-        ? widget.pickerHsvColor as HSVColor
-        : HSVColor.fromColor(widget.pickerColor);
   }
 
   void colorPickerTextInputListener() {
@@ -236,7 +227,7 @@ class _ColorPickerState extends State<ColorPicker> {
   Widget colorPickerSlider(TrackType trackType) {
     return ColorPickerSlider(
       trackType,
-      currentHsvColorSecond,
+      currentHsvColor,
       additionalHsvColors: currentHsvColors,
       displayThumbColor: widget.displayThumbColor,
       onColorChanged: (HSVColor color, [List<HSVColor>? colors = const []]) {
@@ -244,14 +235,14 @@ class _ColorPickerState extends State<ColorPicker> {
         widget.hexInputController?.text =
             colorToHex(color.toColor(), enableAlpha: widget.enableAlpha);
         setState(() {
-          currentHsvColorSecond = color;
+          currentHsvColor = color;
           currentHsvColors = colors!;
         });
 
         final currentColors = currentHsvColors.map((e) => e.toColor()).toList();
-        widget.onColorChanged(currentHsvColorSecond.toColor(), currentColors);
+        widget.onColorChanged(currentHsvColor.toColor(), currentColors);
         if (widget.onHsvColorChanged != null) {
-          widget.onHsvColorChanged!(currentHsvColorSecond);
+          widget.onHsvColorChanged!(currentHsvColor);
         }
       },
     );
@@ -262,10 +253,10 @@ class _ColorPickerState extends State<ColorPicker> {
     final List<Color> hsvToColors = additionalColors.map((hsv) => hsv.toColor()).toList();
     widget.hexInputController?.text = colorToHex(color.toColor(), enableAlpha: widget.enableAlpha);
     setState(() {
-      currentHsvColorSecond = color;
+      currentHsvColor = color;
       currentHsvColors = additionalColors;
     });
-    widget.onColorChanged(currentHsvColorSecond.toColor(), hsvToColors);
+    widget.onColorChanged(currentHsvColor.toColor(), hsvToColors);
     if (widget.onHsvColorChanged != null) {
       widget.onHsvColorChanged!(currentHsvColor);
     }
@@ -275,7 +266,7 @@ class _ColorPickerState extends State<ColorPicker> {
     return ClipRRect(
       borderRadius: widget.pickerAreaBorderRadius,
       child: ColorPickerArea(
-        currentHsvColorSecond,
+        currentHsvColor,
         onColorChanging,
         widget.paletteType,
         wheelType: widget.wheelType,
@@ -330,14 +321,14 @@ class _ColorPickerState extends State<ColorPicker> {
                       height: widget.sliderHeight,
                       width: double.infinity,
                       child: sliderByPaletteType(widget.paletteType)),
-                if (widget.isColorControl)
+                if (widget.showColorControl)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 14),
                       const Text(
                         'Saturation',
-                        style: TextStyle(
+                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.0,
@@ -353,7 +344,7 @@ class _ColorPickerState extends State<ColorPicker> {
                       const SizedBox(height: 20),
                       const Text(
                         'Lightness',
-                        style: TextStyle(
+                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.0,
