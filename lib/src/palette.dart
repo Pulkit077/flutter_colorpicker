@@ -2,7 +2,6 @@
 ///
 /// Try to create a Color Picker with other layout on your own :)
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -1372,7 +1371,6 @@ class ColorPickerSlider extends StatelessWidget {
         final mainColor = hslToHsv(hsvToHsl(hsvColor).withLightness(progress));
         final additionalColorsLightness =
             additionalHsvColors?.map((e) => hslToHsv(hsvToHsl(e).withLightness(progress))).toList();
-        print(hsvToHsl(hsvColor).withLightness(progress));
         onColorChanged(mainColor, additionalColorsLightness);
         break;
 
