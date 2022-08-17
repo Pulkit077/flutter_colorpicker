@@ -12,34 +12,35 @@ import 'utils.dart';
 
 /// The default layout of Color Picker.
 class ColorPicker extends StatefulWidget {
-  const ColorPicker(
-      {Key? key,
-      required this.pickerColor,
-      required this.onColorChanged,
-      this.pickerHsvColor,
-      this.onHsvColorChanged,
-      this.paletteType = PaletteType.hsvWithHue,
-      this.enableAlpha = true,
-      @Deprecated('Use empty list in [labelTypes] to disable label.')
-          this.showLabel = true,
-      this.labelTypes = const [ColorLabelType.rgb, ColorLabelType.hsv, ColorLabelType.hsl],
-      @Deprecated('Use Theme.of(context).textTheme.bodyText1 & 2 to alter text style.')
-          this.labelTextStyle,
-      this.displayThumbColor = false,
-      this.portraitOnly = false,
-      this.colorPickerWidth = 300.0,
-      this.pickerAreaHeightPercent = 1.0,
-      this.pickerAreaBorderRadius = const BorderRadius.all(Radius.zero),
-      this.hexInputBar = false,
-      this.showColorPicker = true,
-      this.hexInputController,
-      this.colorHistory,
-      this.onHistoryChanged,
-      this.wheelType,
-      this.sliderHeight = 44})
-      : super(key: key);
+  const ColorPicker({
+    Key? key,
+    required this.pickerColor,
+    required this.onColorChanged,
+    this.pickerHsvColor,
+    this.onHsvColorChanged,
+    this.paletteType = PaletteType.hsvWithHue,
+    this.enableAlpha = true,
+    @Deprecated('Use empty list in [labelTypes] to disable label.') this.showLabel = true,
+    this.labelTypes = const [ColorLabelType.rgb, ColorLabelType.hsv, ColorLabelType.hsl],
+    @Deprecated('Use Theme.of(context).textTheme.bodyText1 & 2 to alter text style.')
+        this.labelTextStyle,
+    this.displayThumbColor = false,
+    this.portraitOnly = false,
+    this.colorPickerWidth = 300.0,
+    this.pickerAreaHeightPercent = 1.0,
+    this.pickerAreaBorderRadius = const BorderRadius.all(Radius.zero),
+    this.hexInputBar = false,
+    this.showColorPicker = true,
+    this.hexInputController,
+    this.colorHistory,
+    this.onHistoryChanged,
+    this.wheelType,
+    this.sliderHeight = 44,
+    this.isColorControl = false,
+  }) : super(key: key);
 
   final Color pickerColor;
+  final bool isColorControl;
   final double sliderHeight;
   final bool showColorPicker;
   final void Function(Color, [List<Color>?]) onColorChanged;
@@ -246,6 +247,7 @@ class _ColorPickerState extends State<ColorPicker> {
           currentHsvColorSecond = color;
           currentHsvColors = colors!;
         });
+
         final currentColors = currentHsvColors.map((e) => e.toColor()).toList();
         widget.onColorChanged(currentHsvColorSecond.toColor(), currentColors);
         if (widget.onHsvColorChanged != null) {
@@ -281,8 +283,8 @@ class _ColorPickerState extends State<ColorPicker> {
     );
   }
 
-  Widget sliderByPaletteType() {
-    switch (widget.paletteType) {
+  Widget sliderByPaletteType(PaletteType type) {
+    switch (type) {
       case PaletteType.hsv:
       case PaletteType.hsvWithHue:
       case PaletteType.hsl:
@@ -323,10 +325,49 @@ class _ColorPickerState extends State<ColorPicker> {
             padding: const EdgeInsets.only(top: 12.0),
             child: Column(
               children: <Widget>[
-                SizedBox(
-                    height: widget.sliderHeight,
-                    width: double.infinity,
-                    child: sliderByPaletteType()),
+                if (widget.showColorPicker)
+                  SizedBox(
+                      height: widget.sliderHeight,
+                      width: double.infinity,
+                      child: sliderByPaletteType(widget.paletteType)),
+                if (widget.isColorControl)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 14),
+                      const Text(
+                        'Saturation',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.0,
+                          fontSize: 14,
+                          color: Color(0xFF394352),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                          height: widget.sliderHeight,
+                          width: double.infinity,
+                          child: sliderByPaletteType(PaletteType.hslWithSaturation)),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Lightness',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.0,
+                          fontSize: 14,
+                          color: Color(0xFF394352),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                          height: widget.sliderHeight,
+                          width: double.infinity,
+                          child: sliderByPaletteType(PaletteType.hslWithLightness)),
+                    ],
+                  ),
                 if (widget.enableAlpha)
                   SizedBox(
                     height: 40.0,
@@ -406,7 +447,11 @@ class _ColorPickerState extends State<ColorPicker> {
                       SizedBox(
                           height: widget.sliderHeight,
                           width: double.infinity,
-                          child: sliderByPaletteType()),
+                          child: sliderByPaletteType(widget.paletteType)),
+                      SizedBox(
+                          height: widget.sliderHeight,
+                          width: double.infinity,
+                          child: sliderByPaletteType(PaletteType.hslWithSaturation)),
                       if (widget.enableAlpha)
                         SizedBox(
                             height: 40.0, width: 260.0, child: colorPickerSlider(TrackType.alpha)),

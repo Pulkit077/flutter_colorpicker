@@ -1345,11 +1345,13 @@ class ColorPickerSlider extends StatelessWidget {
             additionalHsvColors?.map((e) => e.withHue(progress * 359)).toList();
         onColorChanged(hsvColor.withHue(progress * 359), additionalColorsHue);
         break;
+
       case TrackType.saturation:
         final additionalColorsSaturation =
             additionalHsvColors?.map((e) => e.withSaturation(progress)).toList();
         onColorChanged(hsvColor.withSaturation(progress), additionalColorsSaturation);
         break;
+
       case TrackType.saturationForHSL:
         final additionalColorsSaturationForHSL = additionalHsvColors!
             .map((e) => hslToHsv(hsvToHsl(e).withSaturation(progress)))
@@ -1359,28 +1361,33 @@ class ColorPickerSlider extends StatelessWidget {
           additionalColorsSaturationForHSL,
         );
         break;
+
       case TrackType.value:
         final additionalColorsValue =
             additionalHsvColors?.map((e) => e.withValue(progress)).toList();
         onColorChanged(hsvColor.withValue(progress), additionalColorsValue);
         break;
+
       case TrackType.lightness:
+        final mainColor = hslToHsv(hsvToHsl(hsvColor).withLightness(progress));
         final additionalColorsLightness =
             additionalHsvColors?.map((e) => hslToHsv(hsvToHsl(e).withLightness(progress))).toList();
-        onColorChanged(
-          hslToHsv(hsvToHsl(hsvColor).withLightness(progress)),
-          additionalColorsLightness,
-        );
+        print(hsvToHsl(hsvColor).withLightness(progress));
+        onColorChanged(mainColor, additionalColorsLightness);
         break;
+
       case TrackType.red:
         onColorChanged(HSVColor.fromColor(hsvColor.toColor().withRed((progress * 0xff).round())));
         break;
+
       case TrackType.green:
         onColorChanged(HSVColor.fromColor(hsvColor.toColor().withGreen((progress * 0xff).round())));
         break;
+
       case TrackType.blue:
         onColorChanged(HSVColor.fromColor(hsvColor.toColor().withBlue((progress * 0xff).round())));
         break;
+
       case TrackType.alpha:
         onColorChanged(
             hsvColor.withAlpha(localDx.clamp(0.0, box.maxWidth - 30.0) / (box.maxWidth - 30.0)));
