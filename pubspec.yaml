@@ -24,4 +24,4 @@ flutter:
   fonts:
     - family: Montserrat
       fonts:
-        - asset: Montserrat-Medium.ttf
+        - asset: lib/src/Montserrat-Medium.ttf
