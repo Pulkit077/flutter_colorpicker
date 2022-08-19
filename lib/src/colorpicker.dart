@@ -265,11 +265,14 @@ class _ColorPickerState extends State<ColorPicker> {
   Widget colorPicker() {
     return ClipRRect(
       borderRadius: widget.pickerAreaBorderRadius,
-      child: ColorPickerArea(
-        currentHsvColor,
-        onColorChanging,
-        widget.paletteType,
-        wheelType: widget.wheelType,
+      child: Padding(
+       padding: EdgeInsets.all(widget.paletteType == PaletteType.hueWheel ? 10 : 0),
+        child: ColorPickerArea(
+          currentHsvColor,
+          onColorChanging,
+          widget.paletteType,
+          wheelType: widget.wheelType,
+        ),
       ),
     );
   }
