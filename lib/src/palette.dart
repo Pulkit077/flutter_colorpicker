@@ -551,7 +551,7 @@ class HUEColorWheelPainter extends CustomPainter {
           colorPickerPaint,
         );
 
-        final Path pathToSmallCircle = Path()
+        final Path pathComplementary = Path()
           ..moveTo(
               center.dx +
                   ((hsvColor.saturation * radio) - smallPickerRadius) *
@@ -570,7 +570,7 @@ class HUEColorWheelPainter extends CustomPainter {
                       sin((hsvColor.hue * pi / 180)));
         canvas.drawPath(
           dashPath(
-            pathToSmallCircle,
+            pathComplementary,
             dashArray: CircularIntervalList<double>(<double>[4.0, 1.0]),
           ),
           linesBetweenPoints,
@@ -597,7 +597,7 @@ class HUEColorWheelPainter extends CustomPainter {
           colorPickerPaint,
         );
 
-        final Path pathToSecondCircle = Path()
+        final Path pathSplitComplementary = Path()
           ..moveTo(
             center.dx +
                 ((hsvColor.saturation * radio) - smallPickerRadius) *
@@ -624,7 +624,7 @@ class HUEColorWheelPainter extends CustomPainter {
           );
         canvas.drawPath(
           dashPath(
-            pathToSecondCircle,
+            pathSplitComplementary,
             dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
           ),
           linesBetweenPoints,
@@ -649,7 +649,8 @@ class HUEColorWheelPainter extends CustomPainter {
           smallPickerRadius,
           colorPickerPaint,
         );
-        final Path pathToSecondCircle = Path()
+
+        final Path pathAnalogus = Path()
           ..moveTo(
             dx(offset),
             dy(offset),
@@ -664,7 +665,7 @@ class HUEColorWheelPainter extends CustomPainter {
           );
         canvas.drawPath(
           dashPath(
-            pathToSecondCircle,
+            pathAnalogus,
             dashArray: CircularIntervalList<double>(<double>[5.0, 1.5]),
           ),
           linesBetweenPoints,
@@ -688,6 +689,59 @@ class HUEColorWheelPainter extends CustomPainter {
           smallPickerRadius,
           colorPickerPaint,
         );
+
+        final Path pathMonochromatic = Path()
+          ..moveTo(
+            center.dx +
+                ((hsvColor.saturation * radio) - smallPickerRadius) *
+                    cos((hsvColor.hue * pi / 180)),
+            center.dy -
+                ((hsvColor.saturation * radio) - smallPickerRadius) *
+                    sin((hsvColor.hue * pi / 180)),
+          )
+          ..lineTo(
+            center.dx +
+                ((hsvColor.saturation * radio / 1.45) + smallPickerRadius) *
+                    cos((hsvColor.hue * pi / 180)),
+            center.dy -
+                ((hsvColor.saturation * radio / 1.45) + smallPickerRadius) *
+                    sin((hsvColor.hue * pi / 180)),
+          );
+
+        final secondPathMonochromatic = Path()
+          ..moveTo(
+            center.dx +
+                ((hsvColor.saturation * radio / 1.45) - smallPickerRadius) *
+                    cos((hsvColor.hue * pi / 180)),
+            center.dy -
+                ((hsvColor.saturation * radio / 1.45) - smallPickerRadius) *
+                    sin((hsvColor.hue * pi / 180)),
+          )
+          ..lineTo(
+            center.dx +
+                ((hsvColor.saturation * radio / 2.50) + smallPickerRadius) *
+                    cos((hsvColor.hue * pi / 180)),
+            center.dy -
+                ((hsvColor.saturation * radio / 2.50) + smallPickerRadius) *
+                    sin((hsvColor.hue * pi / 180)),
+          );
+
+        canvas
+          ..drawPath(
+            dashPath(
+              pathMonochromatic,
+              dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
+            ),
+            linesBetweenPoints,
+          )
+          ..drawPath(
+            dashPath(
+              secondPathMonochromatic,
+              dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
+            ),
+            linesBetweenPoints,
+          );
+
         break;
 
       case HarmonyType.square:
@@ -724,7 +778,7 @@ class HUEColorWheelPainter extends CustomPainter {
           smallPickerRadius,
           colorPickerPaint,
         );
-        final Path pathToSecondCircle = Path()
+        final Path pathSquare = Path()
           ..moveTo(
             center.dx +
                 ((hsvColor.saturation * radio) - smallPickerRadius) *
@@ -748,7 +802,7 @@ class HUEColorWheelPainter extends CustomPainter {
           ..close();
         canvas.drawPath(
           dashPath(
-            pathToSecondCircle,
+            pathSquare,
             dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
           ),
           linesBetweenPoints,
@@ -773,7 +827,7 @@ class HUEColorWheelPainter extends CustomPainter {
           smallPickerRadius,
           colorPickerPaint,
         );
-        final Path pathToSecondCircle = Path()
+        final Path pathTriadic = Path()
           ..moveTo(
             center.dx +
                 ((hsvColor.saturation * radio) - smallPickerRadius) *
@@ -797,7 +851,7 @@ class HUEColorWheelPainter extends CustomPainter {
           ..close();
         canvas.drawPath(
           dashPath(
-            pathToSecondCircle,
+            pathTriadic,
             dashArray: CircularIntervalList<double>(<double>[4.0, 1.5]),
           ),
           linesBetweenPoints,
