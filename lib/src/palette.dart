@@ -1422,7 +1422,6 @@ class ColorPickerSlider extends StatelessWidget {
         break;
 
       case TrackType.lightness:
-        print(progress);
         if (progress <= 0.9999999999 && progress >= 0.00000000099) {
           final mainColor = hslToHsv(hsvToHsl(hsvColor).withLightness(progress));
           final additionalColorsLightness = additionalHsvColors
