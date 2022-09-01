@@ -268,7 +268,7 @@ class _ColorPickerState extends State<ColorPicker> {
       child: Padding(
        padding: EdgeInsets.all(widget.paletteType == PaletteType.hueWheel ? 10 : 0),
         child: ColorPickerArea(
-          currentHsvColor,
+          HSVColor.fromColor(widget.pickerColor),
           onColorChanging,
           widget.paletteType,
           wheelType: widget.wheelType,
