@@ -168,7 +168,7 @@ class ColorPicker extends StatefulWidget {
   final ValueChanged<List<Color>>? onHistoryChanged;
 
   @override
-  _ColorPickerState createState() => _ColorPickerState();
+  State<ColorPicker> createState() => _ColorPickerState();
 }
 
 class _ColorPickerState extends State<ColorPicker> {
@@ -678,7 +678,7 @@ class _SlidePickerState extends State<SlidePicker> {
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Text(
                     trackType.toString().split('.').last[0].toUpperCase(),
-                    style: widget.sliderTextStyle ?? Theme.of(context).textTheme.bodyText1,
+                    style: widget.sliderTextStyle ?? Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
               Expanded(child: colorPickerSlider(trackType)),
@@ -687,7 +687,7 @@ class _SlidePickerState extends State<SlidePicker> {
                   constraints: BoxConstraints(minWidth: fontSize * 2 + 5),
                   child: Text(
                     getColorParams(trackTypes.indexOf(trackType)),
-                    style: widget.sliderTextStyle ?? Theme.of(context).textTheme.bodyText2,
+                    style: widget.sliderTextStyle ?? Theme.of(context).textTheme.bodyMedium,
                     textAlign: TextAlign.right,
                   ),
                 ),
@@ -745,7 +745,7 @@ class HueRingPicker extends StatefulWidget {
   final BorderRadius pickerAreaBorderRadius;
 
   @override
-  _HueRingPickerState createState() => _HueRingPickerState();
+  State<HueRingPicker> createState() => _HueRingPickerState();
 }
 
 class _HueRingPickerState extends State<HueRingPicker> {

@@ -1,4 +1,4 @@
-/// Common function lib
+// Common function lib
 
 import 'dart:math';
 import 'package:flutter/painting.dart';
@@ -210,6 +210,16 @@ extension ColorExtension1 on String {
 
 // Extension from Color
 extension ColorExtension2 on Color {
-  String toHexString({bool includeHashSign = false, bool enableAlpha = true, bool toUpperCase = true}) =>
-      colorToHex(this, includeHashSign: false, enableAlpha: true, toUpperCase: true);
+  String toHexString({
+    bool includeHashSign = false,
+    bool enableAlpha = true,
+    bool toUpperCase = true,
+  }) {
+    return colorToHex(
+      this,
+      includeHashSign: includeHashSign,
+      enableAlpha: enableAlpha,
+      toUpperCase: toUpperCase,
+    );
+  }
 }
